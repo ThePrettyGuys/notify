@@ -7,11 +7,9 @@ class Notifier {
         if (this.subscribersMap[artistId]) {
             if (this.subscribersMap[artistId].indexOf(email) === -1) {
                 this.subscribersMap[artistId].push(email);
-                console.log(this.subscribersMap);
             }
         } else {
             this.subscribersMap[artistId] = [email];
-            console.log(this.subscribersMap);
         }
     }
 
@@ -19,7 +17,6 @@ class Notifier {
         let index = this.subscribersMap[artistId].indexOf(email)
         if (index !== -1) {
             this.subscribersMap[artistId].splice(index, 1);
-            console.log(this.subscribersMap);
         }
     }
 
@@ -30,6 +27,12 @@ class Notifier {
     deleteSubscriptionsForArtist(artistId) {
         delete this.subscribersMap[artistId];
     }
+
+    notifySubscribersToArtist(emailData) {
+        let subscribers = this.getSubscriptionsForArtist(emailData.artistId);
+        emailData['subscribers'] = subscribers;
+        console.log(emailData);
+    }
 }
 
-module.exports = Notifier
+module.exports = Notifier;

@@ -7,7 +7,7 @@ app.post('/subscribe', notificationsController.subscribe);
 
 app.post('/unsubscribe', notificationsController.unsubscribe);
 
-//app.post('/notify', notificationsController.notify);
+app.post('/notify', notificationsController.notify);
 
 app.get('/subscriptions', notificationsController.getSubscriptions);
 

@@ -62,3 +62,18 @@ exports.deleteSubscriptions = function(req, res, next ) {
         .then( () => { return res.status(200).json() } )
         .catch(() => res.status(404).json({status: 404, errorCode: "RELATED_RESOURCE_NOT_FOUND"}))
 };
+
+exports.notify = function (req, res, next) {
+    if(!req.body.artistId || !req.body.from || !req.body.subject || !req.body.message){ res.status(400).json({status: 400, errorCode: "BAD_REQUEST"}) }
+    let emailData = {artistId: req.body.artistId, from: req.body.from, subject: req.body.subject, message: req.body.message};
+    const options = {
+        url: `${unqfyURL}/${req.body.artistId}`,
+        json: true,
+    };
+    return rp.get(options)
+        .then((result) => {
+            return notifier.notifySubscribersToArtist(emailData);
+        })
+        .then( () => { return res.status(200).json() } )
+        .catch(() => res.status(404).json({status: 404, errorCode: "RELATED_RESOURCE_NOT_FOUND"}))
+};
