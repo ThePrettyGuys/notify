@@ -5,14 +5,22 @@ class Notifier {
 
     addSubscriberToArtist(email, artistId){
         if (this.subscribersMap[artistId]) {
-            if (this.subscribersMap[artistId].indexOf(email) === -1) { this.subscribersMap[artistId].push(email); }
+            if (this.subscribersMap[artistId].indexOf(email) === -1) {
+                this.subscribersMap[artistId].push(email);
+                console.log(this.subscribersMap);
+            }
         } else {
             this.subscribersMap[artistId] = [email];
+            console.log(this.subscribersMap);
         }
     }
 
     removeSubscriberFromArtist(email, artistId) {
-        if (this.subscribersMap[artistId].indexOf(email) !== -1) { this.subscribersMap[artistId].remove(email); }
+        let index = this.subscribersMap[artistId].indexOf(email)
+        if (index !== -1) {
+            this.subscribersMap[artistId].splice(index, 1);
+            console.log(this.subscribersMap);
+        }
     }
 
     getSubscriptionsForArtist(artistId) {

@@ -8,17 +8,9 @@
 // Requires
 let express= require ('express');
 let bodyParser= require ('body-parser');
-let appRoutes = require('./routes/app');
-let notificationRoutes = require('./routes/notifications');
 
 // Inicializar variables
 let app = express();
-
-// Rutas
-app.use('/api', notificationRoutes);
-app.use('/', appRoutes);
-
-
 
 // CORS
 app.use(function(req, res, next) {
@@ -33,6 +25,28 @@ app.use(function(req, res, next) {
 app.use(bodyParser.urlencoded({ extended: false}));
 //parse application/json
 app.use(bodyParser.json());
+
+// Importar rutas
+let appRoutes = require('./routes/app');
+let notificationRoutes = require('./routes/notifications');
+
+// Rutas
+app.use('/api', notificationRoutes);
+app.use('/', appRoutes);
+
+app.use(require('body-parser').json());
+app.use(require('body-parser').urlencoded({ extended: true }));
+
+app.use((err, req, res, next) => {
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+        res.status(400).json({
+            "status": 400,
+            "errorCode": "BAD_REQUEST"
+        })
+    }
+
+    next();
+});
 
 // Escuchar peticiones
 app.listen(5000, () => {

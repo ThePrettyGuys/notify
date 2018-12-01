@@ -7,10 +7,10 @@ app.post('/subscribe', notificationsController.subscribe);
 
 app.post('/unsubscribe', notificationsController.unsubscribe);
 
-app.post('/notify', notificationsController.notify);
+//app.post('/notify', notificationsController.notify);
 
 app.get('/subscriptions', notificationsController.getSubscriptions);
 
-app.delete('/subcriptions', notificationsController.deleteSubscriptions);
+app.delete('/subscriptions', notificationsController.deleteSubscriptions);
 
 module.exports = app;
