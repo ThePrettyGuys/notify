@@ -1,3 +1,5 @@
+let emailService = require('./emailService');
+
 class Notifier {
     constructor() {
         this.subscribersMap = {};
@@ -31,7 +33,7 @@ class Notifier {
     notifySubscribersToArtist(emailData) {
         let subscribers = this.getSubscriptionsForArtist(emailData.artistId);
         emailData['subscribers'] = subscribers;
-        console.log(emailData);
+        emailService.sendEmail(emailData);
     }
 }
 
