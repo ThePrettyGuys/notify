@@ -71,8 +71,8 @@ exports.notify = function (req, res, next) {
         json: true,
     };
     return rp.get(options)
-        .then((result) => {
-            return notifier.notifySubscribersToArtist(emailData);
+        .then(() => {
+            notifier.notifySubscribersToArtist(emailData);
         })
         .then( () => { return res.status(200).json() } )
         .catch(() => res.status(404).json({status: 404, errorCode: "RELATED_RESOURCE_NOT_FOUND"}))
