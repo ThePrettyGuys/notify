@@ -3,7 +3,7 @@ let app= express();
 
 //Rutas
 app.get('/', (req, res) => {
-    res.send(200)
+    res.sendStatus(200)
 });
 
 app.use('*', function(req, res){
