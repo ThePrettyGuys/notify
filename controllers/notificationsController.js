@@ -1,79 +1,100 @@
+const rp = require('request-promise');
 const Notifier = require('../notifier.js');
 let notifier = new Notifier();
-let unqfyURL = "http://localhost:3000/api/artists";
-const rp = require('request-promise');
+let unqfyArtistURL = require('../config/endpoints').UNQFYARTISTURL;
+const errorCode = require('../errorCodes');
+
+function getByArtistId(artistId, onFulfilled,
+                       onSuccess = () => {
+                           return res.status(200).json();
+                       },
+                       onRejected = () => res.status(404).json({
+                           status: 404,
+                           errorCode: errorCode.RELATED_RESOURCE_NOT_FOUND
+                       })
+) {
+    const options = {
+        url: `${unqfyArtistURL}/${artistId}`,
+        json: true
+    };
+    return rp.get(options)
+        .then(onFulfilled)
+        .then(onSuccess)
+        .catch(onRejected);
+}
 
 exports.subscribe = function (req, res, next) {
-    if(!req.body.artistId || !req.body.email){ res.status(400).json({status: 400, errorCode: "BAD_REQUEST"}) }
-    let subscriptionData = {artistId: req.body.artistId, email: req.body.email};
-    const options = {
-        url: `${unqfyURL}/${req.body.artistId}`,
-        json: true,
+    const artistId = req.body.artistId;
+    const email = req.body.email;
+    if (!artistId || !email) {
+        res.status(400).json({ status: 400, errorCode: errorCode.BAD_REQUEST });
+    }
+
+    const onFulfilled = (result) => {
+        return notifier.addSubscriberToArtist(artistId, email);
     };
-    return rp.get(options)
-        .then((result) => {
-            return notifier.addSubscriberToArtist(subscriptionData.email, subscriptionData.artistId);
-        })
-        .then( () => { return res.status(200).json() } )
-        .catch(() => res.status(404).json({status: 404, errorCode: "RELATED_RESOURCE_NOT_FOUND"}))
+
+    return getByArtistId(artistId, onFulfilled);
 };
 
+exports.unsubscribe = function (req, res, next) {
+    const artistId = req.body.artistId;
+    const email = req.body.email;
+    if (!artistId || !email) {
+        res.status(400).json({ status: 400, errorCode: errorCode.BAD_REQUEST });
+    }
 
-exports.unsubscribe = function(req, res, next ) {
-    if(!req.body.artistId || !req.body.email){ res.status(400).json({status: 400, errorCode: "BAD_REQUEST"}) }
-    let subscriptionData = {artistId: req.body.artistId, email: req.body.email};
-    const options = {
-        url: `${unqfyURL}/${req.body.artistId}`,
-        json: true,
+    const onFulfilled = (result) => {
+        return notifier.removeSubscriberFromArtist(email, artistId);
     };
-    return rp.get(options)
-        .then((result) => {
-            return notifier.removeSubscriberFromArtist(subscriptionData.email, subscriptionData.artistId);
-        })
-        .then( () => { return res.status(200).json() } )
-        .catch(() => res.status(404).json({status: 404, errorCode: "RELATED_RESOURCE_NOT_FOUND"}))
+
+    return getByArtistId(artistId, onFulfilled);
 };
 
-exports.getSubscriptions = function(req, res, next ) {
+exports.getSubscriptions = function (req, res, next) {
     let artistId = req.query.artistId;
-    const options = {
-        url: `${unqfyURL}/${artistId}`,
-        json: true,
+    const onFulfilled = (result) => {
+        return notifier.getSubscriptionsForArtist(artistId);
     };
-    return rp.get(options)
-        .then((result) => {
-            return notifier.getSubscriptionsForArtist(artistId);
-        })
-        .then( (data) => { return res.status(200).json({ artistId: artistId, subscriptors: data}) } )
-        .catch(() => res.status(404).json({status: 404, errorCode: "RELATED_RESOURCE_NOT_FOUND"}))
+    const onSuccess = (data) => {
+        return res.status(200).json({ artistId: artistId, subscriptors: data });
+    };
+
+    return getByArtistId(artistId, onFulfilled, onSuccess);
 };
 
-exports.deleteSubscriptions = function(req, res, next ) {
-    if(!req.body.artistId){ res.status(400).json({status: 400, errorCode: "BAD_REQUEST"}) }
+exports.deleteSubscriptions = function (req, res, next) {
     let artistId = req.body.artistId;
-    const options = {
-        url: `${unqfyURL}/${artistId}`,
-        json: true,
+    if (!artistId) {
+        res.status(400).json({ status: 400, errorCode: errorCode.BAD_REQUEST });
+    }
+
+    const onFulfilled = (result) => {
+        return notifier.deleteSubscriptionsForArtist(artistId);
     };
-    return rp.get(options)
-        .then((result) => {
-            return notifier.deleteSubscriptionsForArtist(artistId);
-        })
-        .then( () => { return res.status(200).json() } )
-        .catch(() => res.status(404).json({status: 404, errorCode: "RELATED_RESOURCE_NOT_FOUND"}))
+
+    return getByArtistId(artistId, onFulfilled);
 };
 
 exports.notify = function (req, res, next) {
-    if(!req.body.artistId || !req.body.from || !req.body.subject || !req.body.message){ res.status(400).json({status: 400, errorCode: "BAD_REQUEST"}) }
-    let emailData = {artistId: req.body.artistId, from: req.body.from, subject: req.body.subject, message: req.body.message};
-    const options = {
-        url: `${unqfyURL}/${req.body.artistId}`,
-        json: true,
+    const artistId = req.body.artistId;
+    const from = req.body.from;
+    const subject = req.body.subject;
+    const message = req.body.message;
+
+    if (!artistId || !from || !subject || !message) {
+        res.status(400).json({ status: 400, errorCode: errorCode.BAD_REQUEST });
+    }
+    let emailData = {
+        artistId: artistId,
+        from: from,
+        subject: subject,
+        message: message
     };
-    return rp.get(options)
-        .then(() => {
-            notifier.notifySubscribersToArtist(emailData);
-        })
-        .then( () => { return res.status(200).json() } )
-        .catch(() => res.status(404).json({status: 404, errorCode: "RELATED_RESOURCE_NOT_FOUND"}))
+
+    onFulfilled = () => {
+        notifier.notifySubscribersToArtist(emailData);
+    };
+
+    return getByArtistId(artistId, onFulfilled);
 };

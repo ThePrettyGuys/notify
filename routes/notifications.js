@@ -1,6 +1,6 @@
 let express= require('express');
 let app= express();
-let notificationsController = require('../controllers/notificationsController')
+let notificationsController = require('../controllers/notificationsController');
 
 //Rutas
 app.post('/subscribe', notificationsController.subscribe);
