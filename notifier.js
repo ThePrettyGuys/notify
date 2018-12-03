@@ -5,7 +5,7 @@ class Notifier {
         this.subscribersMap = {};
     }
 
-    addSubscriberToArtist(email, artistId){
+    addSubscriberToArtist(artistId, email){
         if (this.subscribersMap[artistId]) {
             if (this.subscribersMap[artistId].indexOf(email) === -1) {
                 this.subscribersMap[artistId].push(email);
@@ -16,7 +16,7 @@ class Notifier {
     }
 
     removeSubscriberFromArtist(email, artistId) {
-        let index = this.subscribersMap[artistId].indexOf(email)
+        let index = this.subscribersMap[artistId].indexOf(email);
         if (index !== -1) {
             this.subscribersMap[artistId].splice(index, 1);
         }
