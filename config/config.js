@@ -10,5 +10,5 @@ exports.CREDENTIALS_PATH = 'credentials.json';
 exports.TOKEN_PATH = 'token.json';
 exports.MAIL_VERSION = 'v1';
 
-exports.SERVER_PORT = 5000;
+exports.SERVER_PORT = 5001;
 
