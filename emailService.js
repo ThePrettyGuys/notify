@@ -1,15 +1,14 @@
-const fs = require('fs');
-const promisify = require('util').promisify;
-const {google} = require('googleapis');
 const getGmailClient = require('./gmailClient');
-
+const userId = require('./config/config').USERID;
+const fromEmail = require('./config/config').FROM_EMAIL;
+const fromName = require('./config/config').FROM_NAME;
 const gmailClient = getGmailClient();
 
 exports.sendEmail = function(emailData) {
     emailData.subscribers.forEach( (subscriber) => {
         gmailClient.users.messages.send(
             {
-                userId: 'me',
+                userId: userId,
                 requestBody: {
                     raw: createMessage(emailData, subscriber),
                 },
@@ -18,12 +17,11 @@ exports.sendEmail = function(emailData) {
     });
 };
 
-
 function createMessage(emailData, subscriber) {
     const subject = emailData.subject;
     const utf8Subject = `=?utf-8?B?${Buffer.from(subject).toString('base64')}?=`;
     const messageParts = [
-        'From: Unqfy <unqfy@gmail.com>',
+        `From: ${fromName} <${fromEmail}>`,
         `To: ${subscriber} `,
         'Content-Type: text/html; charset=utf-8',
         'MIME-Version: 1.0',

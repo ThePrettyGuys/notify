@@ -1,7 +1,7 @@
 const rp = require('request-promise');
 const Notifier = require('../notifier.js');
 let notifier = new Notifier();
-let unqfyArtistURL = require('../config/config').UNQFYARTISTURL;
+let unqfyArtistURL = require('../config/endpoints').UNQFYARTISTURL;
 const errorCode = require('../errorCodes');
 
 function getByArtistId(artistId, onFulfilled,
@@ -31,7 +31,7 @@ exports.subscribe = function (req, res, next) {
     }
 
     const onFulfilled = (result) => {
-        return notifier.addSubscriberToArtist(email, artistId);
+        return notifier.addSubscriberToArtist(artistId, email);
     };
 
     return getByArtistId(artistId, onFulfilled);
