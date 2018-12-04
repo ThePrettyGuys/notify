@@ -29,6 +29,7 @@ exports.subscribe = function (req, res, next) {
     };
 
     const onSuccess = () => {
+        console.log(`El mail: ${email} se ha subscripto al artista de id: ${artistId}`);
         return res.status(200).json();
     };
 

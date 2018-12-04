@@ -33,6 +33,7 @@ class Notifier {
     notifySubscribersToArtist(emailData) {
         let subscribers = this.getSubscriptionsForArtist(emailData.artistId);
         emailData['subscribers'] = subscribers;
+        console.log(`La lista de subscriptores para ${emailData.artistId} es: ${subscribers}`);
         emailService.sendEmail(emailData);
     }
 }
