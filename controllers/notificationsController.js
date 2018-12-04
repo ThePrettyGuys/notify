@@ -123,7 +123,7 @@ exports.notify = function (req, res, next) {
     };
 
     const onFulfilled = () => {
-        notifier.notifySubscribersToArtist(emailData);
+        return notifier.notifySubscribersToArtist(emailData);
     };
 
     const onSuccess = () => {
