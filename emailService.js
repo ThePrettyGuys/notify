@@ -5,17 +5,21 @@ const fromName = require('./config/config').FROM_NAME;
 const gmailClient = getGmailClient();
 
 exports.sendEmail = function(emailData) {
-    emailData.subscribers.forEach( (subscriber) => {
-        gmailClient.users.messages.send(
-            {
-                userId: userId,
-                requestBody: {
-                    raw: createMessage(emailData, subscriber),
-                },
-            }
-        );
-    });
+    emailData.subscribers.map(sendEmailTo);
 };
+
+
+function sendEmailTo(subscriber){
+    console.log(`Se envia mail a: ${subscriber}`);
+    return gmailClient.users.messages.send(
+        {
+            userId: userId,
+            requestBody: {
+                raw: createMessage(emailData, subscriber),
+            },
+        }
+    );
+}
 
 function createMessage(emailData, subscriber) {
     const subject = emailData.subject;
