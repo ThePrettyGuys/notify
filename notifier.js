@@ -22,7 +22,7 @@ class Notifier {
         }
     }
 
-    getSubscriptionsForArtist(artistId) {
+    getSubscribersForArtist(artistId) {
         return this.subscribersMap[artistId];
     }
 
@@ -31,10 +31,9 @@ class Notifier {
     }
 
     notifySubscribersToArtist(emailData) {
-        let subscribers = this.getSubscriptionsForArtist(emailData.artistId);
-        emailData['subscribers'] = subscribers;
+        let subscribers = this.getSubscribersForArtist(emailData.artistId);
         console.log(`La lista de subscriptores para ${emailData.artistId} es: ${subscribers}`);
-        emailService.sendEmail(emailData);
+        emailService.sendEmail(subscribers, emailData);
     }
 }
 

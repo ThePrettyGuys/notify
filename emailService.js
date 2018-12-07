@@ -4,13 +4,12 @@ const fromEmail = require('./config/config').FROM_EMAIL;
 const fromName = require('./config/config').FROM_NAME;
 const gmailClient = getGmailClient();
 
-exports.sendEmail = function(emailData) {
-    emailData.subscribers.map(sendEmailTo);
+exports.sendEmail = function(subscribers, emailData) {
+    return subscribers.map(subscriber => sendEmailTo(subscriber, emailData));
 };
 
-
-function sendEmailTo(subscriber){
-    console.log(`Se envia mail a: ${subscriber}`);
+function sendEmailTo(subscriber, emailData){
+    console.log(`Se envia mail a: ${subscriber}, por artista: ${emailData.artistId}`);
     return gmailClient.users.messages.send(
         {
             userId: userId,

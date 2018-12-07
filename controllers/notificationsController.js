@@ -67,7 +67,7 @@ exports.unsubscribe = function (req, res, next) {
 exports.getSubscriptions = function (req, res, next) {
     let artistId = req.query.artistId;
     const onFulfilled = () => {
-        const subscriptionsForArtist = notifier.getSubscriptionsForArtist(artistId);
+        const subscriptionsForArtist = notifier.getSubscribersForArtist(artistId);
         console.log(`obtengo las subscripciones: ${subscriptionsForArtist}`);
         return subscriptionsForArtist;
     };
